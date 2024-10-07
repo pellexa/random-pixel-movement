@@ -88,6 +88,11 @@
     </p>
 
     <script>
+      const CLASS_NAME = 'pixel';
+      const NUMBER_PIXELS = 15;
+      const STEP_PIXELS = 40;
+      const DELAY_MOVEMENT = 2500; // ms
+
       const fullPageSize = () => {
         // Full document height
         const scrollHeight = Math.max(
@@ -132,12 +137,19 @@
             color = 'gray';
           }
 
-          div.className = 'pixel';
+          div.className = CLASS_NAME;
           div.style.top = `${randomY}px`;
           div.style.left = `${randomX}px`;
           div.style.backgroundColor = color;
 
           document.body.prepend(div);
+        });
+      };
+
+      const removePixels = () => {
+        const pixelList = document.getElementsByClassName(CLASS_NAME);
+        Array.from(pixelList).forEach(pixel => {
+          pixel.remove();
         });
       };
 
@@ -171,7 +183,7 @@
 
       const movePixels = (step = 20) => {
         const fullSize = fullPageSize();
-        const pixelList = document.getElementsByClassName('pixel');
+        const pixelList = document.getElementsByClassName(CLASS_NAME);
 
         Array.from(pixelList).forEach(pixel => {
           const move = randomDirect(step);
@@ -238,8 +250,20 @@
         });
       };
 
-      createPixels(15);
-      setInterval(() => movePixels(40), 2500);
+      createPixels(NUMBER_PIXELS);
+      let intervalId = setInterval(
+        () => movePixels(STEP_PIXELS),
+        DELAY_MOVEMENT
+      );
+
+      const resizeHandler = () => {
+        clearInterval(intervalId);
+        removePixels();
+        createPixels(NUMBER_PIXELS);
+        intervalId = setInterval(() => movePixels(STEP_PIXELS), DELAY_MOVEMENT);
+      };
+
+      window.addEventListener('resize', resizeHandler);
     </script>
   </body>
 </html>
